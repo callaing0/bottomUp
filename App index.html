@@ -3,115 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스마트 예약 시스템</title>
+    <title>bottomUp 병원 | 스마트 예약 시스템</title>
     <style>
-        /* [전체 배경 및 레이아웃 설정] */
-        body { 
-            font-family: 'Pretendard', sans-serif; 
-            /* 선형 그라데이션 배경: 왼쪽 위에서 오른쪽 아래로 부드럽게 색상 변화 */
-            background: linear-gradient(135deg, #f8f9fa 0%, #e6b8a2 100%); 
-            /* 화면 중앙 정렬을 위한 Flexbox 설정 */
-            display: flex; 
-            justify-content: center; /* 가로 중앙 */
-            align-items: center;     /* 세로 중앙 */
-            height: 100vh;           /* 화면 높이 전체 사용 */
-            margin: 0; 
+        /* [1. 전역 스타일 및 변수] 
+        - 디자인의 통일성을 위해 색상과 공통 수치를 변수로 관리합니다.
+        */
+        :root {
+            --header-height: 70px; /* 상단바의 높이 정의 */
+            --primary-color: #bc8a7e; /* 병원 브랜드 메인 색상 (차분한 로즈 브라운) */
+            --accent-color: #e6b8a2;  /* 강조 및 배경 포인트 색상 */
         }
 
-        /* [중앙 흰색 카드 컨테이너] */
+        body { 
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; 
+            /* 그라데이션 배경: 왼쪽 위에서 오른쪽 아래로 부드럽게 색상이 변하는 효과 */
+            background: linear-gradient(135deg, #f8f9fa 0%, var(--accent-color) 100%); 
+            display: flex; 
+            flex-direction: column; 
+            margin: 0; 
+            min-height: 100vh; /* 화면 전체 높이를 채워 푸터를 바닥에 고정 */
+        }
+
+        /* [2. 상단바 스타일] 
+        - 페이지 상단에 고정되어 로고와 네비게이션을 제공합니다.
+        */
+        header {
+            width: 100%;
+            height: var(--header-height);
+            padding: 0 5%;
+            display: flex;
+            justify-content: space-between; /* 로고는 왼쪽, 메뉴는 오른쪽 끝 배치 */
+            align-items: center;
+            box-sizing: border-box;
+            background: #ffffff;
+            position: fixed; /* 스크롤을 내려도 상단에 고정됨 */
+            top: 0;
+            left: 0;
+            z-index: 1000; /* 다른 요소보다 항상 위에 표시 */
+            border-bottom: 1px solid rgba(230, 184, 162, 0.2);
+        }
+        
+        .logo {
+            font-size: 24px !important; 
+            font-weight: 800;
+            color: var(--primary-color);
+            text-decoration: none;
+            letter-spacing: -1px; /* 글자 간격을 좁혀 세련된 느낌 전달 */
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #495057;
+            margin-left: 25px;
+            font-size: 15px;
+            font-weight: 700;
+            transition: 0.2s; /* 마우스 호버 시 부드러운 색상 전환 */
+        }
+
+        .nav-links a:hover { color: var(--primary-color); }
+
+        /* [3. 메인 컨텐츠 영역] 
+        - 화면 중앙에 카드 컨텐츠가 위치하도록 정렬합니다.
+        */
+        main {
+            flex: 1; /* 가용한 모든 중앙 공간을 차지 */
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+            padding-top: var(--header-height); /* 상단바에 가려지지 않게 여백 추가 */
+            box-sizing: border-box;
+        }
+
+        /* [4. 중앙 카드 컨테이너] 
+        - 핵심 정보를 담는 화이트 톤의 둥근 박스입니다.
+        */
         .main-container { 
             background: white; 
-            padding: 50px 40px; 
-            border-radius: 30px;     /* 모서리를 둥글게 처리 */
-            /* 부드러운 그림자 효과로 입체감 부여 */
-            box-shadow: 0 10px 30px rgba(52, 58, 64, 0.08); 
+            padding: 60px 40px; 
+            border-radius: 30px; 
+            /* 부드러운 그림자 효과로 입체감 형성 */
+            box-shadow: 0 20px 50px rgba(188, 138, 126, 0.15); 
             text-align: center; 
-            width: 100%; 
+            width: 90%; 
             max-width: 550px; 
         }
 
-        /* [텍스트 스타일] */
-        h1 { color: #343a40; margin-bottom: 10px; font-size: 1.8em; }
-        p.desc { color: #bc8a7e; margin-bottom: 40px; } /* 서브 설명 텍스트 색상 */
+        h1 { color: #343a40; margin-bottom: 10px; font-size: 2em; font-weight: 800; }
+        p.desc { color: var(--primary-color); margin-bottom: 40px; font-weight: 500; }
 
-        /* [메뉴 버튼 배치 영역] */
+        /* [5. 메뉴 버튼 그리드] 
+        */
         .menu-grid { 
             display: flex; 
-            flex-direction: row;     /* 버튼을 가로로 배치 */
+            flex-direction: row;
             justify-content: center;
-            gap: 30px;               /* 버튼 사이의 간격 */
+            gap: 30px; 
         }
 
-        /* [개별 원형 메뉴 버튼] */
         .menu-card {
             display: flex;
-            flex-direction: column;  /* 아이콘과 글자를 세로로 배치 */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             width: 180px;
             height: 180px;
-            background: #ffffff;     /* 기본 배경은 흰색 */
-            border: 2px solid #f1f3f5; /* 연한 회색 테두리 */
-            border-radius: 50%;      /* 버튼을 완전한 원형으로 만듦 */
-            cursor: pointer;         /* 마우스 커서를 손가락 모양으로 변경 */
-            transition: all 0.3s ease; /* 모든 상태 변화를 0.3초 동안 부드럽게 애니메이션 */
-            text-decoration: none;   /* 링크 밑줄 제거 */
+            background: #ffffff;
+            border: 2px solid #f1f3f5;
+            border-radius: 50%; /* 완벽한 원형 생성 */
+            cursor: pointer;
+            transition: all 0.3s ease; /* 모든 상태 변화를 부드럽게 처리 */
+            text-decoration: none;
             color: inherit;
-            box-sizing: border-box;  /* 패딩과 테두리를 너비에 포함 */
-            padding: 20px;
+            box-sizing: border-box;
         }
 
-        /* [메뉴 버튼 마우스 오버(Hover) 효과] */
+        /* 버튼 호버 효과: 사용자가 클릭할 수 있음을 시각적으로 알림 */
         .menu-card:hover {
-            transform: translateY(-8px); /* 버튼이 위로 8px 살짝 올라가는 효과 */
-            background-color: #fffaf9;   /* 배경색을 미세한 살구색으로 변경 */
-            border-color: #e6b8a2;       /* 테두리 색상을 강조색으로 변경 */
-            /* 강조된 그림자 효과: 버튼이 떠오르는 느낌 부여 */
-            box-shadow: 0 8px 20px rgba(230, 184, 162, 0.4);
+            transform: translateY(-1px); /* 위로 살짝 떠오르는 효과 */
+            background-color: #fffaf9; /* 배경색 살짝 변경 */
+            border-color: var(--accent-color); /* 테두리 강조 */
+            box-shadow: 0 8px 20px rgba(230, 184, 162, 0.4); /* 그림자 강화 */
         }
 
-        /* [아이콘 및 텍스트 상세 설정] */
-        .icon { 
-            font-size: 2.8em;        /* 이모지 크기 키움 */
-            margin-bottom: 10px; 
-        }
+        .icon { font-size: 2.8em; margin-bottom: 10px; } /* 이모지 아이콘 크기 조절 */
+        .menu-title { font-weight: bold; color: #343a40; }
 
-        .menu-text { text-align: center; }
-        .menu-title { 
-            display: block; 
-            font-size: 1em; 
-            font-weight: bold; 
-            color: #343a40; 
+        /* [6. 하단바 스타일] 
+        */
+        footer {
+            background-color: #343a40;
+            color: #ced4da;
+            padding: 40px 5%;
+            font-size: 13px;
+            text-align: center;
+            line-height: 1.8;
         }
-        
+        footer strong { color: #ffffff; }
+        .copyright { margin-top: 15px; color: #868e96; font-size: 12px; }
+
     </style>
 </head>
 <body>
 
-<div class="main-container">
-    <h1>bottomUp 병원</h1>
-    <p class="desc">온라인 예약 시스템에 오신 것을 환영합니다.</p>
+    <header>
+        <a href="index.html" class="logo">✨ bottomUp 병원</a>
+        <nav class="nav-links">
+            <a href="#">병원소개</a>
+            <a href="#">진료안내</a>
+            <a href="#">커뮤니티</a>
+        </nav>
+    </header>
 
-    <div class="menu-grid">
-        <a href="booking.html" class="menu-card">
-            <span class="icon">📅</span>
-            <div class="menu-text">
-                <span class="menu-title">진료 예약</span>
+    <main>
+        <div class="main-container">
+            <h1>bottomUp 병원</h1>
+            <p class="desc">온라인 예약 시스템에 오신 것을 환영합니다.</p>
+
+            <div class="menu-grid">
+                <a href="booking.html" class="menu-card">
+                    <span class="icon">📅</span>
+                    <span class="menu-title">진료 예약</span>
+                </a>
+
+                <a href="check.html" class="menu-card">
+                    <span class="icon">🔍</span>
+                    <span class="menu-title">예약 확인</span>
+                </a>
             </div>
-        </a>
+        </div>
+    </main>
 
-        <a href="check.html" class="menu-card">
-            <span class="icon">🔍</span>
-            <div class="menu-text">
-                <span class="menu-title">예약 확인</span>
-            </div>
-        </a>
-    </div>
-
-    <footer style="margin-top: 50px; font-size: 0.8em; color: #ced4da;">
-        고객센터: 1588-0000 | 평일 09:00 ~ 18:00
+    <footer>
+        <div class="footer-content">
+            <p><strong>bottomUp 병원</strong> | 사업자등록번호: 000-00-00000 | 대표원장: 홍길동</p>
+            <p>서울특별시 강남구 OOO로 123, OO빌딩 | 대표전화: 1588-0000</p>
+            <p>평일 09:00 ~ 18:00 | 점심시간 13:00 ~ 14:00 (주말/공휴일 휴진)</p>
+            <p class="copyright">&copy; 2026 bottomUp Hospital. All rights reserved.</p>
+        </div>
     </footer>
-</div>
 
 </body>
 </html>

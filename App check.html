@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>병원 예약 조회</title>
+    <style>
+        /* [전체 배경 스타일] */
+        body { 
+            font-family: 'Pretendard', sans-serif; 
+            /* 라이트 그레이와 샌드 핑크의 부드러운 대각선 그라데이션 */
+            background: linear-gradient(135deg, #f8f9fa 0%, #e6b8a2 100%); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; /* 최소 높이를 화면 꽉 차게 설정 */
+            margin: 0; 
+        }
+
+        /* [중앙 컨텐츠 박스] */
+        .container { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(52, 58, 64, 0.08); /* 은은한 그림자로 입체감 */
+            width: 100%; 
+            max-width: 600px; 
+        }
+        
+        /* [제목 스타일] */
+        h2 { text-align: center; color: #343a40; margin-bottom: 20px; }
+        
+        /* [입력 폼 레이아웃] */
+        .login-box { text-align: center; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-size: 0.9em; color: #6c757d; }
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #dee2e6; 
+            border-radius: 8px; 
+            box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */
+        }
+        /* 입력란 클릭 시 테두리 색상 강조 (포커스 효과) */
+        input:focus { outline: none; border-color: #e6b8a2; }
+        
+        /* [메인 버튼: 로즈 골드 컬러] */
+        .auth-btn { 
+            width: 100%; 
+            padding: 15px; 
+            background: #e6b8a2; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 1em; 
+            margin-top: 10px; 
+            transition: background 0.3s; /* 호버 시 색상 전환 효과 */
+        }
+        .auth-btn:hover { background: #dca78e; } /* 마우스 올렸을 때 조금 더 진해짐 */
+
+        /* [예약 내역 결과 영역] */
+        #reservation-content { display: none; } /* 초기 상태는 숨김 처리 */
+        
+        /* [예약 정보 테이블] */
+        .status-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .status-table th, .status-table td { 
+            padding: 15px; 
+            border-bottom: 1px solid #f1f3f5; 
+            text-align: center; 
+            font-size: 0.9em; 
+            color: #495057; 
+        }
+        .status-table th { background-color: #fcfaf9; color: #bc8a7e; } /* 헤더 부분 포인트 컬러 */
+        
+        /* [예약 상태 표시 배지] */
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8em; font-weight: bold; }
+        /* 확정 상태: 연한 핑크 배경 */
+        .badge.confirmed { background-color: #fdf5f3; color: #bc8a7e; } 
+        /* 취소 상태: 무채색 배경 */
+        .badge.canceled { background-color: #f8f9fa; color: #adb5bd; } 
+        
+        /* [취소 버튼 스타일] */
+        .btn-cancel { 
+            padding: 5px 10px; 
+            border: 1px solid #dee2e6; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            background: white; 
+            color: #adb5bd; 
+            transition: all 0.2s; 
+        }
+        .btn-cancel:hover { background: #f8f9fa; color: #343a40; border-color: #adb5bd; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="auth-box" class="login-box">
+        <h2>🔍 예약 조회</h2>
+        <p style="color:#bc8a7e; font-size: 0.9em; margin-bottom: 25px;">예약 정보를 입력해주세요.</p>
+        <div class="input-group">
+            <label>예약자 성함</label>
+            <input type="text" id="checkName" placeholder="예: 홍길동">
+        </div>
+        <div class="input-group">
+            <label>예약 번호</label>
+            <input type="text" id="checkNo" placeholder="예: R260209-1234">
+        </div>
+        <button class="auth-btn" onclick="verifyReservation()">조회하기</button>
+    </div>
+
+    <div id="reservation-content">
+        <h2>나의 예약 내역</h2>
+        <p id="user-welcome" style="text-align: center; color: #bc8a7e; font-weight: bold;"></p>
+        <table class="status-table">
+            <thead>
+                <tr>
+                    <th>예약번호</th>
+                    <th>진료일시</th>
+                    <th>상태</th>
+                    <th>관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="disp-no"></td>
+                    <td>2026.02.15 14:00</td>
+                    <td><span class="badge confirmed" id="status-badge">예약확정</span></td>
+                    <td><button class="btn-cancel" onclick="cancelOrder()">취소</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="auth-btn" style="background:#adb5bd; margin-top: 20px;" onclick="location.reload()">뒤로 가기</button>
+    </div>
+</div>
+
+<script>
+    // 테스트용 임시 데이터
+    const mockData = {
+        name: "홍길동",
+        resNo: "R260209-1234"
+    };
+
+    // [조회 로직]: 이름과 예약번호 일치 여부 확인
+    function verifyReservation() {
+        const inputName = document.getElementById('checkName').value;
+        const inputNo = document.getElementById('checkNo').value;
+
+        if (inputName === mockData.name && inputNo === mockData.resNo) {
+            alert("예약 확인되었습니다.");
+            // 인증 폼은 숨기고 결과 테이블을 보여줌
+            document.getElementById('auth-box').style.display = 'none';
+            document.getElementById('reservation-content').style.display = 'block';
+            
+            // 데이터 바인딩
+            document.getElementById('user-welcome').innerText = `${inputName}님의 예약 정보입니다.`;
+            document.getElementById('disp-no').innerText = inputNo;
+        } else {
+            alert("정보가 일치하지 않습니다. 다시 확인해주세요.\n(테스트용: 홍길동 / R260209-1234)");
+        }
+    }
+
+    // [취소 로직]: 예약 취소 컨펌 및 상태 변경
+    function cancelOrder() {
+        if(confirm("정말 취소하시겠습니까?")) {
+            const badge = document.getElementById('status-badge');
+            badge.innerText = "취소됨"; // 텍스트 변경
+            badge.className = "badge canceled"; // 클래스 변경으로 스타일 교체
+            alert("취소 처리가 완료되었습니다.");
+        }
+    }
+</script>
+
+</body>
+</html>

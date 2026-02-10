@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>bottomUp 병원 | 진료 예약</title>
     <style>
-        /* [1. 전역 스타일 및 변수] 
-           - 브랜드 컬러(로즈 브라운)와 공통 수치를 동일하게 유지하여 통일감을 줍니다.
-        */
+        /* [1. 전역 스타일 및 변수] */
         :root {
             --header-height: 70px;
             --primary-color: #bc8a7e;
@@ -69,7 +67,7 @@
             flex: 1;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* 폼 내용이 길어질 수 있으므로 상단부터 정렬 */
+            align-items: flex-start;
             padding: calc(var(--header-height) + 40px) 20px 60px 20px;
             box-sizing: border-box;
         }
@@ -86,7 +84,6 @@
         
         h2 { text-align: center; color: #343a40; margin-bottom: 30px; font-weight: 700; }
         
-        /* 테이블 형태의 입력 레이아웃 */
         .form-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
         .form-table th, .form-table td { 
             padding: 18px 10px; 
@@ -100,7 +97,6 @@
             font-weight: 600;
         }
         
-        /* 입력 요소(Input, Select, Textarea) 공통 스타일 */
         input, select, textarea { 
             width: 100%; 
             padding: 12px; 
@@ -119,16 +115,16 @@
             box-shadow: 0 0 8px rgba(230, 184, 162, 0.3);
         }
         
-        /* [시간 선택 그리드] 
-           - 3열 구조로 배치하여 예약 가능 시간을 나열합니다.
-        */
+        /* [시간 선택 그리드 스타일] */
         .time-grid { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
             gap: 8px; 
         }
         
-        .time-btn { 
+        /* 라디오 버튼과 연결된 라벨 스타일 (JS 클래스 제어 대체) */
+        .time-label { 
+            display: block;
             padding: 10px; 
             border: 1px solid #f1f3f5; 
             background: #fff; 
@@ -139,17 +135,16 @@
             font-size: 13px; 
             transition: 0.2s; 
         }
-        .time-btn:hover { background: #fffaf9; border-color: var(--accent-color); color: var(--primary-color); }
-        
-        /* 자바스크립트로 제어할 '선택됨' 상태 스타일 */
-        .time-btn.selected { 
-            background: var(--primary-color) !important; 
-            border-color: var(--primary-color) !important; 
-            color: white !important; 
-            font-weight: bold; 
+        .time-label:hover { background: #fffaf9; border-color: var(--accent-color); color: var(--primary-color); }
+
+        /* 핵심: 라디오 버튼이 체크되었을 때 인접한 라벨 스타일링 */
+        input[name="time"]:checked + .time-label {
+            background: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: white !important;
+            font-weight: bold;
         }
 
-        /* 제출 버튼 */
         .submit-btn { 
             width: 100%; 
             padding: 16px; 
@@ -179,7 +174,6 @@
         footer strong { color: #ffffff; }
         .copyright { margin-top: 15px !important; color: #868e96; font-size: 12px; }
 
-        /* 반응형 설정: 모바일 환경 대응 */
         @media (max-width: 600px) {
             header { padding: 0 20px; }
             .nav-links { display: none; }
@@ -232,7 +226,6 @@
                             <option>이도윤 선생님</option>
                             <option>박서준 선생님</option>
                             <option>정하은 선생님</option>
-                            <option>최현우 선생님</option>
                         </select>
                     </td>
                 </tr>
@@ -240,15 +233,32 @@
                     <th>희망 시간</th>
                     <td>
                         <div class="time-grid">
-                            <div class="time-btn">09:00</div>
-                            <div class="time-btn">10:00</div>
-                            <div class="time-btn">11:00</div>
-                            <div class="time-btn">13:00</div>
-                            <div class="time-btn">14:00</div>
-                            <div class="time-btn">15:00</div>
-                            <div class="time-btn">16:00</div>
-                            <div class="time-btn">17:00</div>
-                            <div class="time-btn">18:00</div>
+                            <input type="radio" name="time" id="t09" value="09:00" hidden>
+                            <label for="t09" class="time-label">09:00</label>
+
+                            <input type="radio" name="time" id="t10" value="10:00" hidden>
+                            <label for="t10" class="time-label">10:00</label>
+
+                            <input type="radio" name="time" id="t11" value="11:00" hidden>
+                            <label for="t11" class="time-label">11:00</label>
+
+                            <input type="radio" name="time" id="t13" value="13:00" hidden>
+                            <label for="t13" class="time-label">13:00</label>
+
+                            <input type="radio" name="time" id="t14" value="14:00" hidden>
+                            <label for="t14" class="time-label">14:00</label>
+
+                            <input type="radio" name="time" id="t15" value="15:00" hidden>
+                            <label for="t15" class="time-label">15:00</label>
+
+                            <input type="radio" name="time" id="t16" value="16:00" hidden>
+                            <label for="t16" class="time-label">16:00</label>
+
+                            <input type="radio" name="time" id="t17" value="17:00" hidden>
+                            <label for="t17" class="time-label">17:00</label>
+
+                            <input type="radio" name="time" id="t18" value="18:00" hidden>
+                            <label for="t18" class="time-label">18:00</label>
                         </div>
                     </td>
                 </tr>
@@ -271,45 +281,30 @@
     </footer>
 
     <script>
-        // 선택된 시간을 저장할 변수
-        let selectedTime = "";
-
-        /* [시간 버튼 선택 로직] 
-           - 버튼 클릭 시 다른 버튼의 선택 상태를 해제하고, 클릭한 버튼만 강조합니다.
-        */
-        document.querySelectorAll('.time-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                // 모든 버튼에서 'selected' 클래스 제거
-                document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
-                // 현재 클릭된 버튼에만 'selected' 클래스 추가
-                btn.classList.add('selected');
-                // 선택된 텍스트값 저장
-                selectedTime = btn.innerText;
-            });
-        });
-
-        /* [예약 제출 로직] 
-           - 입력 필드의 누락 여부를 검사하고 가상의 예약번호를 생성합니다.
+        /* [제출 로직] 
         */
         function submitBooking() {
             const name = document.getElementById('userName').value;
             const phone = document.getElementById('userPhone').value;
             const dept = document.getElementById('department').value;
             const doctor = document.getElementById('doctor').value;
+            const symptoms = document.getElementById('symptoms').value;
 
-            // 필수 항목 입력 유무 확인
+            // 선택된 라디오 버튼의 value값 가져오기
+            const selectedRadio = document.querySelector('input[name="time"]:checked');
+            const selectedTime = selectedRadio ? selectedRadio.value : "";
+
+            // 모든 항목(시간 포함) 입력 유무 확인
             if(!name || !phone || !dept || !doctor || !selectedTime) {
                 alert("모든 항목을 입력하고 시간을 선택해 주세요.");
                 return;
             }
 
-            // 가상의 예약번호 생성 (R + 오늘날짜 + 랜덤4자리)
+            // 가상의 예약번호 생성
             const resNo = "R" + new Date().toISOString().slice(2,10).replace(/-/g,"") + "-" + Math.floor(1000+Math.random()*9000);
 
-            // 성공 알림창 출력
-            alert(`✨ 예약이 성공적으로 접수되었습니다!\n\n예약번호: ${resNo}\n성함: ${name}님\n시간: ${selectedTime}`);
+            alert(`✨ 예약이 성공적으로 접수되었습니다!\n\n예약번호: ${resNo}\n성함: ${name}님\n과목: ${dept}\n시간: ${selectedTime}`);
             
-            // 페이지 초기화 (실제로는 예약 리스트나 확인 페이지로 이동 가능)
             location.reload();
         }
     </script>

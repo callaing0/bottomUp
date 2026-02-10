@@ -1,0 +1,16 @@
+/* [진료 예약 전용 스타일 - booking.css] */
+.form-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+.form-table th, .form-table td { padding: 18px 10px; border-bottom: 1px solid #f1f3f5; text-align: left; }
+.form-table th { width: 35%; color: var(--primary-color); font-size: 15px; font-weight: 600; }
+
+.time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.time-label { 
+    display: block; padding: 10px; border: 1px solid #f1f3f5; background: #fff; 
+    color: #868e96; border-radius: 8px; cursor: pointer; text-align: center; font-size: 13px; 
+}
+.time-label:hover { background: #fffaf9; border-color: var(--accent-color); color: var(--primary-color); }
+
+input[name="time"]:checked + .time-label {
+    background: var(--primary-color) !important; border-color: var(--primary-color) !important;
+    color: white !important; font-weight: bold;
+}

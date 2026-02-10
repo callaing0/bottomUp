@@ -1,0 +1,32 @@
+package java260210;
+
+public class AppointmentMain {
+    public static void main(String[] args) {
+        // 1. DAO 객체 생성
+        AppointmentDAO dao = new AppointmentDAO();
+
+        System.out.println("========================================");
+        System.out.println("   HOSPITAL DB MANAGEMENT SYSTEM v1.0   ");
+        System.out.println("========================================");
+
+        // 2. 새로운 예약 데이터 삽입 (C)
+        // 웹 화면에서 선택했던 '최다인(105)', '정닥터(7)' 데이터를 예시로 넣습니다.
+        System.out.println("\n[시스템] 새 예약 기록을 등록합니다...");
+        
+        // 데이터 형식: (환자ID, 의사ID, 예약일시, 상태)
+        dao.insertAppointment(105, 7, "2024-05-22 11:00:00", "예약");
+        dao.insertAppointment(102, 1, "2024-05-23 15:30:00", "진료완료");
+
+        System.out.println("----------------------------------------");
+
+        // 3. 전체 예약 목록 조회 (R)
+        System.out.println("[시스템] 현재 데이터베이스 내 전체 예약 명단을 출력합니다.");
+        System.out.println("----------------------------------------");
+        
+        dao.printAllAppointments();
+
+        System.out.println("----------------------------------------");
+        System.out.println("[시스템] 모든 작업이 성공적으로 완료되었습니다.");
+        System.out.println("========================================");
+    }
+}

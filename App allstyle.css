@@ -1,0 +1,75 @@
+/* [공통 스타일 - style.css] */
+:root {
+    --header-height: 70px;
+    --primary-color: #bc8a7e;
+    --accent-color: #e6b8a2;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body { 
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; 
+    background: linear-gradient(135deg, #f8f9fa 0%, var(--accent-color) 100%); 
+    display: flex; flex-direction: column; margin: 0; min-height: 100vh;
+}
+
+/* 상단바 */
+header {
+    width: 100%; height: var(--header-height); padding: 0 5%;
+    display: flex; justify-content: space-between; align-items: center;
+    background: #ffffff; position: fixed; top: 0; left: 0; z-index: 1000;
+    border-bottom: 1px solid rgba(230, 184, 162, 0.2);
+}
+
+.logo {
+    font-size: 24px !important; font-weight: 800; color: var(--primary-color);
+    text-decoration: none; letter-spacing: -1px; display: flex; align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none; color: #495057; margin-left: 25px;
+    font-size: 15px; font-weight: 700; transition: 0.2s;
+}
+.nav-links a:hover { color: var(--primary-color); }
+
+/* 중앙 레이아웃 및 컨테이너 */
+main {
+    flex: 1; display: flex; justify-content: center; align-items: flex-start;
+    padding: calc(var(--header-height) + 40px) 20px 60px 20px;
+}
+
+.container, .main-container { 
+    background: white; padding: 40px; border-radius: 30px; 
+    box-shadow: 0 20px 50px rgba(188, 138, 126, 0.15); 
+    width: 100%; max-width: 550px;
+}
+
+h2 { text-align: center; color: #343a40; margin-bottom: 25px; font-weight: 700; }
+
+/* 공통 입력창 (Input, Select, Textarea) */
+input, select, textarea { 
+    width: 100%; padding: 12px; border: 1px solid #f1f3f5; border-radius: 10px; 
+    color: #495057; background-color: #fcfcfc; font-size: 14px; transition: all 0.2s;
+}
+input:focus, select:focus, textarea:focus { 
+    outline: none; border-color: var(--accent-color); 
+    background-color: #fff; box-shadow: 0 0 8px rgba(230, 184, 162, 0.2); 
+}
+
+/* 공통 큰 버튼 (조회, 제출, 예약확정) */
+.auth-btn, .submit-btn { 
+    width: 100%; padding: 16px; background: var(--primary-color); color: white; 
+    border: none; border-radius: 12px; cursor: pointer; font-size: 17px; 
+    font-weight: 600; margin-top: 15px; transition: 0.3s; 
+    box-shadow: 0 4px 12px rgba(188, 138, 126, 0.3);
+}
+.auth-btn:hover, .submit-btn:hover { background: #a6766a; transform: translateY(-1px); }
+
+/* 하단바 */
+footer {
+    background-color: #343a40; color: #ced4da; padding: 40px 5%;
+    font-size: 13px; text-align: center; line-height: 1.8;
+}
+footer strong { color: #ffffff; }
+.copyright { margin-top: 15px; color: #868e96; font-size: 12px; }
+

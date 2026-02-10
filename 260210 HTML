@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>병원 예약 관리 시스템 v1.0</title>
+    <style>
+        /* 2000년대 Retro OS 스타일 */
+        body { 
+            font-family: 'Gulim', '굴림', sans-serif; 
+            background-color: #008080; /* 클래식 윈도우 배경색 */
+            display: flex; 
+            justify-content: center; 
+            padding: 20px;
+            margin: 0;
+        }
+        
+        .container { display: flex; gap: 15px; max-width: 1000px; width: 100%; }
+        
+        /* 윈도우 창 디자인 */
+        .window { 
+            background: #c0c0c0; 
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            padding: 3px;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+        }
+
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            color: white;
+            padding: 3px 10px;
+            font-weight: bold;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .window-body { padding: 15px; }
+        
+        h2 { font-size: 14px; margin: 0 0 10px 0; color: #000; }
+        
+        label { display: block; margin-top: 10px; font-size: 12px; color: #000; }
+        
+        /* 고전적인 입력창 스타일 */
+        input, select { 
+            width: 100%; 
+            padding: 4px; 
+            margin-top: 2px; 
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            background: white;
+            font-size: 12px;
+            box-sizing: border-box;
+        }
+        
+        /* 90-00년대식 버튼 */
+        .btn-submit { 
+            width: 100%; 
+            padding: 6px; 
+            background: #c0c0c0; 
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            cursor: pointer; 
+            margin-top: 20px; 
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .btn-submit:active {
+            border-color: #808080 #ffffff #ffffff #808080;
+            padding: 7px 5px 5px 7px;
+        }
+
+        /* 리스트 영역 */
+        .list-box { flex: 2; }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            background: white; 
+            border: 2px solid #808080;
+        }
+        
+        th { 
+            background: #c0c0c0; 
+            color: black; 
+            padding: 5px; 
+            font-size: 12px; 
+            border: 1px solid #808080;
+            text-align: center;
+        }
+        
+        td { 
+            padding: 5px; 
+            border: 1px solid #dfdfdf; 
+            font-size: 12px; 
+            color: #000; 
+        }
+
+        /* 상태 텍스트 (배지 대신 텍스트 강조) */
+        .status { font-weight: bold; font-size: 11px; }
+        .status-booked { color: #0000ff; }
+        .status-canceled { color: #ff0000; }
+        .status-completed { color: #008000; }
+        
+        .id-badge { color: #666; font-size: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="window" style="flex: 1; height: fit-content;">
+        <div class="title-bar">
+            <span>예약 등록.exe</span>
+            <span>? X</span>
+        </div>
+        <div class="window-body">
+            <h2>🏥 진료 예약 입력</h2>
+            <hr>
+            <label>환자명 선택(P)</label>
+            <select id="patientSelect">
+                <option value="101">김철수</option>
+                <option value="102">이영희</option>
+                <option value="103">박민수</option>
+                <option value="105" selected>최다인</option>
+            </select>
+
+            <label>담당 의사 선택(D)</label>
+            <select id="doctorSelect">
+                <option value="1">김닥터 (내과)</option>
+                <option value="2">이닥터 (외과)</option>
+                <option value="5">박닥터 (소아과)</option>
+                <option value="7" selected>정닥터 (피부과)</option>
+            </select>
+
+            <label>예약 일시(T)</label>
+            <input type="datetime-local" id="appDate">
+
+            <label>진료 상태(S)</label>
+            <select id="situation">
+                <option value="예약">예약</option>
+                <option value="취소">취소</option>
+                <option value="진료완료">진료완료</option>
+            </select>
+
+            <button class="btn-submit" onclick="addAppointment()">확인(O)</button>
+        </div>
+    </div>
+
+    <div class="window list-box">
+        <div class="title-bar">
+            <span>예약 현황 목록 - [실시간 업데이트]</span>
+            <span>_ □ X</span>
+        </div>
+        <div class="window-body">
+            <table id="mainGrid">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>환자성명</th>
+                        <th>담당의</th>
+                        <th>예약시간</th>
+                        <th>상태</th>
+                    </tr>
+                </thead>
+                <tbody id="appointmentTable"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const patientNames = { "101": "김철수", "102": "이영희", "103": "박민수", "105": "최다인" };
+    const doctorNames = { "1": "김닥터", "2": "이닥터", "5": "박닥터", "7": "정닥터" };
+
+    let virtualDB = [
+        { app_id: 1, patient_id: 101, doctor_id: 2, app_date: "2024-05-20 10:30", situation: "진료완료" },
+        { app_id: 2, patient_id: 102, doctor_id: 1, app_date: "2024-05-21 14:00", situation: "예약" },
+        { app_id: 3, patient_id: 103, doctor_id: 5, app_date: "2024-05-21 16:30", situation: "취소" }
+    ];
+
+    window.onload = function() {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('appDate').value = now.toISOString().slice(0, 16);
+        renderTable();
+    };
+
+    function renderTable() {
+        const tbody = document.getElementById('appointmentTable');
+        tbody.innerHTML = "";
+
+        virtualDB.forEach(row => {
+            let statusClass = "";
+            if (row.situation === "예약") statusClass = "status-booked";
+            else if (row.situation === "취소") statusClass = "status-canceled";
+            else if (row.situation === "진료완료") statusClass = "status-completed";
+
+            const pName = patientNames[row.patient_id];
+            const dName = doctorNames[row.doctor_id];
+
+            const tr = `<tr>
+                <td align="center">${row.app_id}</td>
+                <td>${pName} <span class="id-badge">(#${row.patient_id})</span></td>
+                <td>${dName}</td>
+                <td>${row.app_date}</td>
+                <td align="center"><span class="status ${statusClass}">${row.situation}</span></td>
+            </tr>`;
+            tbody.innerHTML += tr;
+        });
+    }
+
+    function addAppointment() {
+        const pId = document.getElementById('patientSelect').value;
+        const dId = document.getElementById('doctorSelect').value;
+        const date = document.getElementById('appDate').value.replace('T', ' ');
+        const sit = document.getElementById('situation').value;
+
+        const nextId = virtualDB.length > 0 ? virtualDB[virtualDB.length - 1].app_id + 1 : 1;
+        
+        virtualDB.push({
+            app_id: nextId, patient_id: pId, doctor_id: dId, app_date: date, situation: sit
+        });
+
+        renderTable();
+        alert("데이터베이스에 성공적으로 저장되었습니다.");
+    }
+</script>
+
+</body>
+</html>

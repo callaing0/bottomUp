@@ -1,0 +1,60 @@
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class AppointmentDAO {
+    // 제공해주신 DB 설정 정보
+    private static final String URL = "jdbc:mysql://codevlab.kr:3306/bottomup2?serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&useSSL=false";
+    private static final String USER = "bottomup2";
+    private static final String PASS = "bottomup22";
+
+    // DB 연결 메소드
+    private Connection getConnection() throws SQLException {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return DriverManager.getConnection(URL, USER, PASS);
+    }
+
+    // 1. 새 예약 저장 (C)
+    public void insertAppointment(int patientId, int doctorId, String appDate, String situation) {
+        String sql = "INSERT INTO appointments (patient_id, doctor_id, app_date, situation) VALUES (?, ?, ?, ?)";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, patientId);
+            pstmt.setInt(2, doctorId);
+            pstmt.setString(3, appDate); // "2023-12-25 14:30:00" 형식
+            pstmt.setString(4, situation);
+            
+            pstmt.executeUpdate();
+            System.out.println("DB에 예약 정보가 저장되었습니다.");
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 2. 전체 예약 목록 조회 (R)
+    public void printAllAppointments() {
+        String sql = "SELECT * FROM appointments";
+        
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                System.out.println("예약번호: " + rs.getInt("app_id") + 
+                                   ", 환자ID: " + rs.getInt("patient_id") + 
+                                   ", 의사ID: " + rs.getInt("doctor_id") + 
+                                   ", 날짜: " + rs.getTimestamp("app_date") + 
+                                   ", 상태: " + rs.getString("situation"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}

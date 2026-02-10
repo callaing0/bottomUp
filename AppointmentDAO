@@ -12,12 +12,10 @@ public class AppointmentDAO {
         return DriverManager.getConnection(URL, USER, PASS);
     }
 
-    /**
-     * [기능 1] 예약 등록
-     * 이름과 전화번호로 환자 ID를 찾고, 의사 이름으로 의사 ID를 찾아 등록합니다.
-     */
+
+     // [기능 1] 예약 등록
+
     public void register(String pName, String phone, String dName, String appDate) {
-        // 분 단위 입력 시 초(:00) 자동 추가
         if (appDate.length() == 16) appDate += ":00";
 
         String findPatientSql = "SELECT patient_id FROM patients WHERE patient_name = ? AND phone = ?";
@@ -34,7 +32,7 @@ public class AppointmentDAO {
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next()) pId = rs.getInt("patient_id");
                 else {
-                    System.out.println("❌ 등록되지 않은 환자 정보입니다.");
+                    System.out.println("등록되지 않은 환자 정보입니다.");
                     return;
                 }
             }
@@ -46,7 +44,7 @@ public class AppointmentDAO {
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next()) dId = rs.getInt("doctor_id");
                 else {
-                    System.out.println("❌ 존재하지 않는 의사 이름입니다.");
+                    System.out.println("존재하지 않는 의사 이름입니다.");
                     return;
                 }
             }
@@ -57,7 +55,7 @@ public class AppointmentDAO {
                 pstmt.setString(2, appDate);
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next() && rs.getInt(1) > 0) {
-                    System.out.println("❌ 해당 시간대에 의사 [" + dName + "]님은 이미 예약이 완료되었습니다.");
+                    System.out.println("해당 시간대에 의사 ["+dName+"]님은 이미 예약이 완료되었습니다.");
                     return;
                 }
             }
@@ -70,18 +68,18 @@ public class AppointmentDAO {
                 pstmtInsert(pstmt, pName, dName);
             }
         } catch (SQLException e) {
-            System.err.println("❌ DB 오류: " + e.getMessage());
+            System.err.println("DB 오류: " +e.getMessage());
         }
     }
 
     private void pstmtInsert(PreparedStatement pstmt, String pName, String dName) throws SQLException {
         pstmt.executeUpdate();
-        System.out.println("✅ [" + pName + "]님, [" + dName + "] 의사에게 예약이 완료되었습니다.");
+        System.out.println("["+pName+"]님, ["+dName+"] 의사에게 예약이 완료되었습니다.");
     }
 
-    /**
-     * [기능 2] 예약 내역 확인 (이름과 전화번호 기준)
-     */
+
+     // [기능 2] 예약 내역 확인 
+    
     public void printAppointments(String name, String phone) {
         String sql = "SELECT a.app_id, a.app_date, d.doctor_name, a.situation " +
                      "FROM appointments a " +
@@ -90,8 +88,8 @@ public class AppointmentDAO {
                      "WHERE p.patient_name = ? AND p.phone = ? ORDER BY a.app_date ASC";
 
         System.out.println("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        System.out.println("    🔎 [" + name + "]님의 예약 내역");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.println("      ["+name+"]님의 예약 내역");
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -108,18 +106,17 @@ public class AppointmentDAO {
                 if (!hasData) System.out.println("검색된 예약 내역이 없습니다.");
             }
         } catch (SQLException e) {
-            System.err.println("❌ 조회 오류: " + e.getMessage());
+            System.err.println("조회 오류: " +e.getMessage());
         }
         System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     }
 
-    /**
-     * [기능 3] 예약 취소 (본인 확인 포함)
-     */
+     // [기능 3] 예약 취소 
+
     public void cancelWithAuth(int appId, String name, String phone) {
-        String sql = "UPDATE appointments a " +
-                     "JOIN patients p ON a.patient_id = p.patient_id " +
-                     "SET a.situation = '취소완료' " +
+        String sql = "UPDATE appointments a"+
+                     "JOIN patients p ON a.patient_id = p.patient_id"+
+                     "SET a.situation = '취소완료'"+
                      "WHERE a.app_id = ? AND p.patient_name = ? AND p.phone = ?";
 
         try (Connection conn = getConnection();
@@ -129,12 +126,12 @@ public class AppointmentDAO {
             pstmt.setString(3, phone);
             
             if (pstmt.executeUpdate() > 0) {
-                System.out.println("✅ 예약 번호 [" + appId + "]번이 [취소완료] 되었습니다.");
+                System.out.println("예약 번호 ["+appId+"]번이 [취소완료] 되었습니다.");
             } else {
-                System.out.println("❌ 취소 실패: 정보가 일치하지 않거나 이미 취소된 상태입니다.");
+                System.out.println("취소 실패: 정보가 일치하지 않거나 이미 취소된 상태입니다.");
             }
         } catch (SQLException e) {
-            System.err.println("❌ 취소 오류: " + e.getMessage());
+            System.err.println("취소 오류: " +e.getMessage());
         }
     }
 }

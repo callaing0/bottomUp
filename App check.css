@@ -1,0 +1,19 @@
+/* [예약 조회 전용 스타일 - check.css] */
+.login-box { text-align: center; }
+.input-group { margin-bottom: 20px; text-align: left; }
+.input-group label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--primary-color); font-weight: 600; }
+
+#reservation-content { display: none; }
+.status-table { width: 100%; border-collapse: collapse; margin-top: 25px; }
+.status-table th, .status-table td { padding: 15px 10px; border-bottom: 1px solid #f1f3f5; text-align: center; font-size: 14px; }
+.status-table th { background-color: #fffaf9; color: var(--primary-color); }
+
+.badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+.badge.confirmed { background-color: #fdf5f3; color: var(--primary-color); }
+.badge.canceled { background-color: #f8f9fa; color: #adb5bd; }
+
+.btn-cancel { 
+    padding: 6px 12px; border: 1px solid #dee2e6; border-radius: 8px; 
+    cursor: pointer; background: white; color: #adb5bd; font-size: 12px; transition: 0.2s; 
+}
+.btn-cancel:hover { background: #fff5f5; color: #fa5252; border-color: #ffa8a8; }

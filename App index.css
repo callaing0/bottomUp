@@ -1,0 +1,23 @@
+/* [메인 전용 스타일 - index.css] */
+main { align-items: center; } /* 메인만 정중앙 정렬 */
+.main-container { text-align: center; padding: 60px 40px; }
+
+h1 { color: #343a40; margin-bottom: 10px; font-size: 2em; font-weight: 800; }
+p.desc { color: var(--primary-color); margin-bottom: 40px; font-weight: 500; }
+
+.menu-grid { display: flex; justify-content: center; gap: 30px; }
+
+.menu-card {
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    width: 180px; height: 180px; background: #ffffff; border: 2px solid #f1f3f5;
+    border-radius: 50%; cursor: pointer; transition: all 0.3s ease;
+    text-decoration: none; color: inherit;
+}
+
+.menu-card:hover {
+    transform: translateY(-1px); background-color: #fffaf9;
+    border-color: var(--accent-color); box-shadow: 0 8px 20px rgba(230, 184, 162, 0.4);
+}
+
+.icon { font-size: 2.8em; margin-bottom: 10px; }
+.menu-title { font-weight: bold; color: #343a40; }
